@@ -6,12 +6,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Contact;
+use App\Models\Product;
+use App\Models\Order;
+
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $contactCount = Contact::count();
+        $productCount = Product::count();
+        $orderCount = Order::count();
+        
+
+        return view('admin.dashboard', compact(
+            'contactCount',
+            'productCount',
+            'orderCount'
+           
+        ));
     }
 
     public function profile()
@@ -61,10 +74,10 @@ class AdminController extends Controller
 
     public function all_req()
     {
-       
+
         $contacts = Contact::latest()->get();
 
-        
+
         return view('admin.all-requests', compact('contacts'));
     }
 }

@@ -1,5 +1,5 @@
 
-/*------------------------- Banner Slider -------------------------*/
+/*------------------------- Banner Slider -------------------------
 (function ($) {
   $(document).ready(function () {
     $('.hero-slider').owlCarousel({

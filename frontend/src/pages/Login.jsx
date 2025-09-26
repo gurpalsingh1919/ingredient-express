@@ -1,9 +1,8 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-
+import { API_BASE_URL } from "../config";
 
 const Login = () => {
 	const [formData, setFormData] = useState({
@@ -25,13 +24,12 @@ const Login = () => {
 		setErrors([]);
 
 		try {
-			const res = await axios.post("http://127.0.0.1:8000/api/login", {
+			const res = await axios.post(`${API_BASE_URL}/api/login`, {
 				email: formData.email,
 				password: formData.password,
 			});
 
 			if (res.data.token) {
-				
 				localStorage.setItem("auth_token", res.data.token);
 				localStorage.setItem("user", JSON.stringify(res.data.user));
 
@@ -43,7 +41,7 @@ const Login = () => {
 					showConfirmButton: false,
 				});
 
-				navigate("/"); 
+				navigate("/");
 			}
 		} catch (err) {
 			if (err.response?.data?.errors) {

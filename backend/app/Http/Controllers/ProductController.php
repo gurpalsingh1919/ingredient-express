@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('images')->get();
+        $products = Product::with(['images', 'categories'])->get();
         return view('admin.products.index', compact('products'));
     }
 

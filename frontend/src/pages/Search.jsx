@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
-
-const BASE_URL = "http://127.0.0.1:8000/img/products/";
+import { API_BASE_URL } from "../config"; // import dynamic base URL
 
 const Search = () => {
    const [products, setProducts] = useState([]);
@@ -32,7 +31,7 @@ const Search = () => {
       }
       setLoading(true);
       try {
-         const res = await axios.get(`http://127.0.0.1:8000/api/search-suggestions?q=${q}`);
+         const res = await axios.get(`${API_BASE_URL}/api/search-suggestions?q=${q}`); // dynamic API URL
          if (res.data.status) {
             setProducts(res.data.products || []);
             setTotalMatches(res.data.products?.length || 0);
@@ -104,8 +103,8 @@ const Search = () => {
                                     className="imgResponsive"
                                     src={
                                        product.images?.length > 0
-                                          ? `${BASE_URL}${product.images[0].image}`
-                                          : "http://127.0.0.1:8000/img/categories/noimage.png"
+                                          ? `${API_BASE_URL}/img/products/${product.images[0].image}` // dynamic image URL
+                                          : `${API_BASE_URL}/img/categories/noimage.png` // dynamic fallback
                                     }
                                     alt={product.title}
                                  />

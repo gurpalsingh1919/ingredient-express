@@ -1,34 +1,44 @@
-// src/pages/MyAccount.jsx
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Tabs, Tab } from "react-bootstrap";
+import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 const MyAccount = () => {
 	const [key, setKey] = useState("tab1");
 	const [user, setUser] = useState(null);
 	const [orders, setOrders] = useState([]);
+	const [loading, setLoading] = useState(true);
 
-	// Load user + orders (mock now, API later)
+	const fetchOrders = async () => {
+		const authToken = localStorage.getItem("auth_token");
+		if (!authToken) {
+			setLoading(false);
+			return;
+		}
+		try {
+			const res = await axios.get(`${API_BASE_URL}/api/orders`, {
+				headers: { Authorization: `Bearer ${authToken}` },
+			});
+			if (res.data.success) {
+				setOrders(res.data.orders || []);
+			}
+		} catch (err) {
+			console.error("Error fetching orders:", err.response?.data || err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
 		const storedUser = JSON.parse(localStorage.getItem("user"));
 		setUser(storedUser);
-
-		// Example mock orders, replace with API call
-		setOrders([
-			{ id: "ORD001", date: "09-01-2025", status: "Delivered", amount: "$1,200" },
-			{ id: "ORD002", date: "25-05-2025", status: "Shipped", amount: "$3,499" },
-			{ id: "ORD003", date: "10-08-2025", status: "Cancelled", amount: "$2,499" },
-		]);
+		fetchOrders();
 	}, []);
 
-	// Safely split full name into first and last
 	const fullName = user?.name || "";
 	const nameParts = fullName.trim().split(" ");
-
-	// First name is always the first word
 	const firstName = nameParts[0] || "";
-
-	// Last name is everything else joined back
 	const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
 	return (
@@ -41,15 +51,6 @@ const MyAccount = () => {
 
 			<section className="contentContainer myAccount">
 				<div className="container">
-					{/* Edit Button */}
-					<div className="row">
-						<div className="col-md-12">
-							<div className="d-flex align-items-center justify-content-end">
-								<a href="#" className="editButton">Edit</a>
-							</div>
-						</div>
-					</div>
-
 					{/* Profile Section */}
 					<div className="myProfile mt-2 pb-5">
 						<div className="row">
@@ -60,7 +61,6 @@ const MyAccount = () => {
 										alt="User"
 										className="rounded-circle img-fluid shadow"
 									/>
-									<a href="#" className="d-none">Edit</a>
 								</div>
 							</div>
 
@@ -120,36 +120,46 @@ const MyAccount = () => {
 										<div className="row">
 											<div className="col-md-12">
 												<h4>Order History</h4>
-												<div className="table-responsive">
-													<table className="table table-bordered table-hover text-center align-middle">
-														<thead className="table-dark">
-															<tr>
-																<th>Order ID</th>
-																<th>Date</th>
-																<th>Status</th>
-																<th>Amount</th>
-															</tr>
-														</thead>
-														<tbody>
-															{orders.length > 0 ? (
-																orders.map((order, idx) => (
-																	<tr key={idx}>
-																		<td>
-																			<Link to={`/order-history/${order.id}`}>{order.id}</Link>
-																		</td>
-																		<td>{order.date}</td>
-																		<td>{order.status}</td>
-																		<td>{order.amount}</td>
-																	</tr>
-																))
-															) : (
+												{loading ? (
+													<p>Loading orders...</p>
+												) : orders.length > 0 ? (
+													<div className="table-responsive">
+														<table className="table table-bordered table-hover text-center align-middle">
+															<thead className="table-dark">
 																<tr>
-																	<td colSpan="4">No orders found</td>
+																	<th>Order ID</th>
+																	<th>Date</th>
+																	<th>Status</th>
+																	<th>Amount</th>
 																</tr>
-															)}
-														</tbody>
-													</table>
-												</div>
+															</thead>
+															<tbody>
+																{orders.map((order) => (
+																	<tr key={order.id}>
+																		<td>
+																			<Link to={`/order-history/${order.id}`}>
+																				{order.id}
+																			</Link>
+																		</td>
+																		<td>
+																			{new Date(order.created_at).toLocaleDateString()}
+																		</td>
+																		<td>{order.payment_status}</td>
+																		<td>
+																			$
+																			{(order.orderItems || order.order_items || []).reduce(
+																				(sum, item) => sum + item.quantity * item.price,
+																				0
+																			).toFixed(2)}
+																		</td>
+																	</tr>
+																))}
+															</tbody>
+														</table>
+													</div>
+												) : (
+													<div className="alert alert-info">No orders found.</div>
+												)}
 											</div>
 										</div>
 									</Tab>
@@ -159,19 +169,17 @@ const MyAccount = () => {
 										<div className="row">
 											<div className="col-md-12">
 												<h4>Change Password</h4>
-												<div className="form-group mb-0">
+												<div className="form-group mb-2">
 													<label>Old Password</label>
-													<input type="password" className="w-50" />
+													<input type="password" className="w-50 form-control" />
 												</div>
-												<div className="form-group mb-0">
+												<div className="form-group mb-2">
 													<label>New Password</label>
-													<input type="password" className="w-50" />
+													<input type="password" className="w-50 form-control" />
 												</div>
-												<div className="form-group mb-0">
-													<button className="custom-btn1 custom-btn2 small-custom-btn3">
-														Submit
-													</button>
-												</div>
+												<button className="custom-btn1 custom-btn2 small-custom-btn3 mt-2">
+													Submit
+												</button>
 											</div>
 										</div>
 									</Tab>

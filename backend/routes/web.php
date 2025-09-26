@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
@@ -59,7 +60,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     Route::post('/admin/import', [ProductController::class, 'import_products'])->name('product.import');
 
-
+Route::get('/admin/order-history', [OrderController::class, 'all_orders'])->name('admin.orderhistory');
 
 
 

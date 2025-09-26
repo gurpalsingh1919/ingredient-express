@@ -116,4 +116,39 @@ class ApiController extends Controller
     }
 
 
+    public function productsBySubcategory($id)
+    {
+        $subcategory = Category::find($id);
+
+        if (!$subcategory) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Subcategory not found',
+            ], 404);
+        }
+
+        // get products with images (important)
+        $products = $subcategory->products()
+            ->wherePivot('is_subcategory', true)
+            ->with('images')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'subcategory' => [
+                'id' => $subcategory->id,
+                'name' => $subcategory->name,
+            ],
+            'products' => $products,
+        ]);
+    }
+
+    public function randomProducts()
+    {
+        $products = Product::with('images')->inRandomOrder()->limit(4)->get();
+        return response()->json($products);
+    }
+
+
+
 }

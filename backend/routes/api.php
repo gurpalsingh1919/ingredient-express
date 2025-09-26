@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\OrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,14 +26,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cart/add', [CartController::class, 'add']);
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove']);
     Route::delete('/cart/clear', [CartController::class, 'clear']);
+    Route::post('/paypal/checkout/', [OrderController::class, 'paypalCheckout']);
+    Route::get('/orders', [OrderController::class, 'myOrders']);
+    Route::get('/orders/{order}', [OrderController::class, 'orderDetails']); 
 });
+Route::get('/products/random', [ApiController::class, 'randomProducts']);
 
 Route::get('/categories', [ApiController::class, 'categories']);
 Route::get('/category/{id}', [ApiController::class, 'show']);
 Route::get('/all-products', [ApiController::class, 'all_products']);
 Route::post('/contact', [ApiController::class, 'store_contact']);
 Route::get('/search-suggestions', [ApiController::class, 'searchSuggestions']);
-
+Route::get('/subcategory/{id}/products', [ApiController::class, 'productsBySubcategory']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

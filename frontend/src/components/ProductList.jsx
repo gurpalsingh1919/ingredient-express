@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
-const BASE_URL = "http://127.0.0.1:8000/img/products/";
+import { API_BASE_URL, PRODUCT_IMG_BASE_URL } from "../config"; // ✅ import dynamic URLs
 
 function ProductList() {
    const [products, setProducts] = useState([]);
@@ -13,7 +12,7 @@ function ProductList() {
 
    useEffect(() => {
       axios
-         .get("http://127.0.0.1:8000/api/all-products")
+         .get(`${API_BASE_URL}/api/all-products`) // ✅ dynamic API
          .then((res) => {
             if (res.data.status) {
                setProducts(res.data.products);
@@ -48,13 +47,11 @@ function ProductList() {
    const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
    const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
    const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
-   // Get a small range of page numbers (e.g., 5 pages around current)
    const getPageNumbers = () => {
-      const delta = 2; // pages before/after current
+      const delta = 2;
       let range = [];
       for (let i = Math.max(1, currentPage - delta); i <= Math.min(totalPages, currentPage + delta); i++) {
          range.push(i);
@@ -94,8 +91,8 @@ function ProductList() {
                               className="imgResponsive"
                               src={
                                  product.images?.length > 0
-                                    ? `${BASE_URL}${product.images[0].image}`
-                                    : "http://127.0.0.1:8000/img/categories/noimage.png"
+                                    ? `${PRODUCT_IMG_BASE_URL}${product.images[0].image}` // ✅ dynamic product image
+                                    : `${API_BASE_URL}/img/categories/noimage.png` // ✅ dynamic fallback
                               }
                               alt={product.title}
                            />
@@ -112,7 +109,7 @@ function ProductList() {
             )}
          </div>
 
-         {/* Beautiful Pagination */}
+         {/* Pagination */}
          <nav>
             <ul className="pagination justify-content-center">
                <li

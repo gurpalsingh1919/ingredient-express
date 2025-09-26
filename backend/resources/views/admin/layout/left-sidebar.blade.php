@@ -78,7 +78,7 @@
                    
                 </ul>
             </li>
-            <li class="menu">
+            <!-- <li class="menu">
                 <a href="#discount" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                     <div class="">
                         <i class="flaticon-elements"></i>
@@ -96,12 +96,10 @@
                     <li>
                         <a href="#"> All Discounts</a>
                     </li>
-                    <!-- <li>
-                        <a href="#"> Inactive Careers </a>
-                    </li> -->
+
                    
                 </ul>
-            </li>
+            </li> -->
             <li class="menu">
                 <a href="#orders" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                     <div class="">
@@ -118,7 +116,7 @@
                     </li> -->
 
                     <li>
-                        <a href="#"> All Orders</a>
+                        <a href="{{ route('admin.orderhistory') }}"> All Orders</a>
                     </li>
                     <!-- <li>
                         <a href="#"> Inactive Careers </a>

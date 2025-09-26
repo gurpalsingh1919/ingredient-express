@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config"; // ✅ Import API_BASE_URL
+
 const slugify = (text) =>
-    text.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+  text.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -12,28 +15,25 @@ const Navbar = () => {
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  // Fetch categories
+  // Fetch categories dynamically
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/categories")
+      .get(`${API_BASE_URL}/api/categories`) // ✅ Dynamic URL
       .then((res) => {
         if (res.data.status) setCategories(res.data.data);
       })
       .catch((err) => console.error(err));
   }, []);
 
-  // Toggle search input
   const toggleSearch = () => {
     setShowSearch((prev) => !prev);
     if (showSearch) setQuery("");
   };
 
-  // Focus input when visible
   useEffect(() => {
     if (showSearch && inputRef.current) inputRef.current.focus();
   }, [showSearch]);
 
-  // Fetch live search results
   const fetchResults = useCallback(async (q) => {
     if (!q) {
       setResults([]);
@@ -41,9 +41,7 @@ const Navbar = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/api/search-suggestions?q=${q}`
-      );
+      const res = await axios.get(`${API_BASE_URL}/api/search-suggestions?q=${q}`); // ✅ Dynamic URL
       if (res.data.status) setResults(res.data.products || []);
     } catch {
       setResults([]);
@@ -52,13 +50,11 @@ const Navbar = () => {
     }
   }, []);
 
-  // Debounced live search
   useEffect(() => {
     const debounce = setTimeout(() => fetchResults(query), 300);
     return () => clearTimeout(debounce);
   }, [query, fetchResults]);
 
-  // Submit search
   const handleSubmit = (e) => {
     e.preventDefault();
     if (query.trim()) {
@@ -96,8 +92,9 @@ const Navbar = () => {
                 {categories.length > 0 ? (
                   categories.map((cat) => (
                     <li key={cat.id}>
-                      <Link to={`/ingredient/${slugify(cat.name)}`}
-                                state={{ id: cat.id }}>{cat.name}</Link>
+                      <Link to={`/ingredient/${slugify(cat.name)}`} state={{ id: cat.id }}>
+                        {cat.name}
+                      </Link>
                     </li>
                   ))
                 ) : (
@@ -107,10 +104,10 @@ const Navbar = () => {
             </li>
 
             {/* Other Links */}
-            <li className="nav-item"><Link to="/news" className="nav-link">Gluten Free</Link></li>
-            <li className="nav-item"><Link to="/login" className="nav-link">Organic & Non-GMO</Link></li>
-            <li className="nav-item"><Link to="/register" className="nav-link">Equipments & Tools</Link></li>
-            <li className="nav-item"><Link to="/search-products" className="nav-link">Paper & Packaging</Link></li>
+            <li className="nav-item"><Link to="/products" className="nav-link">Gluten Free</Link></li>
+            <li className="nav-item"><Link to="/products" className="nav-link">Organic & Non-GMO</Link></li>
+            <li className="nav-item"><Link to="/login" className="nav-link">Login</Link></li>
+            <li className="nav-item"><Link to="/my-account" className="nav-link">My Account</Link></li>
 
             {/* Search */}
             <li className="nav-item">
@@ -132,7 +129,6 @@ const Navbar = () => {
                       <button type="button" className="btn-close ms-2" onClick={toggleSearch}></button>
                     </div>
 
-                    {/* Live results dropdown */}
                     {query && (
                       <div className="search-results-dropdown position-absolute bg-white shadow p-2 mt-1 w-100">
                         {loading ? (

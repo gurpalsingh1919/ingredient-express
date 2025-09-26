@@ -12,8 +12,8 @@
                         <i class="fas fa-plus"></i> Add Product
                     </a>
                     <!-- <button class="btn btn-success" data-toggle="modal" data-target="#importModal">
-                        <i class="fas fa-file-excel"></i> Import Excel
-                    </button> -->
+                            <i class="fas fa-file-excel"></i> Import Excel
+                        </button> -->
                 </div>
             </div>
 
@@ -59,10 +59,23 @@
                                         </td>
                                         <td>{{ $product->title }}</td>
                                         <td>
-                                            <span class="badge badge-info">
-                                                {{ optional($product->category)->name ?? 'N/A' }}
-                                            </span>
+                                            @if($product->categories->count() > 0)
+                                                @foreach($product->categories as $cat)
+                                                    <span
+                                                        class="badge {{ $cat->pivot->is_subcategory ? 'badge-warning' : 'badge-info' }}">
+                                                        {{ $cat->name }}
+                                                        @if($cat->pivot->is_subcategory)
+                                                            <small>(Sub)</small>
+                                                        @else
+                                                            <small>(Main)</small>
+                                                        @endif
+                                                    </span>
+                                                @endforeach
+                                            @else
+                                                <span class="badge badge-secondary">N/A</span>
+                                            @endif
                                         </td>
+
                                         <td>
                                             <span class="badge badge-light border">
                                                 {{ $product->size ?? '—' }}

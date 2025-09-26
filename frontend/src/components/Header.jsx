@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import ingredientExpressLogo from "../assets/logo.png";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { API_BASE_URL } from "../config"; // ✅ Import the dynamic base URL
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,11 +15,11 @@ const Header = () => {
 
   const fetchCart = async () => {
     if (!authToken) {
-      setCartCount(0); // ✅ reset to 0 if not logged in
+      setCartCount(0);
       return;
     }
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/cart", {
+      const res = await axios.get(`${API_BASE_URL}/api/cart`, { // ✅ Use dynamic URL
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setCartCount(res.data.count || 0);
@@ -32,7 +33,12 @@ const Header = () => {
     setAuthToken(localStorage.getItem("auth_token"));
     setUser(JSON.parse(localStorage.getItem("user")));
     fetchCart();
-  }, [location, authToken]); // ✅ correct dependency array
+
+    const handleCartUpdated = () => fetchCart();
+    window.addEventListener("cartUpdated", handleCartUpdated);
+
+    return () => window.removeEventListener("cartUpdated", handleCartUpdated);
+  }, [location, authToken]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -47,7 +53,7 @@ const Header = () => {
     localStorage.removeItem("user");
     setAuthToken(null);
     setUser(null);
-    setCartCount(0); // ✅ reset cart count on logout
+    setCartCount(0);
 
     Swal.fire({
       icon: "success",
@@ -64,11 +70,11 @@ const Header = () => {
     <header id="header">
       <div className="container">
         <div className="topBar d-flex justify-content-between">
-          <a className="navbar-brand" href="/">
+          <Link className="navbar-brand" to="/">
             <img src={ingredientExpressLogo} alt="logo" className="header-logo" />
-          </a>
+          </Link>
+
           <div className="d-flex align-items-center topIcons">
-            {/* Search */}
             <div className="search-container d-flex" id="searchBox">
               <button className="search-btn" id="searchBtn">
                 <i className="fas fa-search"></i>
@@ -84,7 +90,6 @@ const Header = () => {
               />
             </div>
 
-            {/* Cart */}
             <div className="cartButton">
               <Link to="/shopping-cart" className="cart-btn">
                 <i className="fas fa-shopping-cart"></i>
@@ -92,7 +97,6 @@ const Header = () => {
               </Link>
             </div>
 
-            {/* Account */}
             <div className="myAccount positionRelative">
               <a href="#" className="myAccount-btn" id="accountIcon" title="My Account">
                 <i className="fas fa-user"></i>

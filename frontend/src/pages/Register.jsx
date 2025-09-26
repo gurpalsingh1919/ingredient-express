@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import { API_BASE_URL } from "../config"; // import dynamic base URL
 
 const Register = () => {
 	const [formData, setFormData] = useState({
@@ -26,7 +26,7 @@ const Register = () => {
 		e.preventDefault();
 
 		try {
-			await axios.post("http://127.0.0.1:8000/api/register", {
+			await axios.post(`${API_BASE_URL}/api/register`, {  // dynamic URL
 				name: `${formData.first_name} ${formData.last_name}`, // combine first & last name
 				email: formData.email,
 				password: formData.password,
@@ -110,4 +110,5 @@ const Register = () => {
 		</section>
 	);
 };
+
 export default Register;

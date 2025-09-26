@@ -13,7 +13,7 @@
             @else
                 <div class="card shadow-sm border-0">
                     <div class="card-body">
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered table-striped" id="html5-extension">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>#</th>

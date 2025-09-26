@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL, CATEGORY_IMG_BASE_URL } from "../config";
 
-const BASE_URL = "http://127.0.0.1:8000/img/categories";
-
-// helper to slugify category names for URLs
+// helper to slugify names for URLs
 const slugify = (text) =>
     text.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
 
@@ -19,12 +18,7 @@ const IngredientDetail = () => {
     useEffect(() => {
         if (id) {
             axios
-                .get(
-                    `${BASE_URL.replace(
-                        "/img/categories",
-                        ""
-                    )}/api/category/${id}`
-                )
+                .get(`${API_BASE_URL}/api/category/${id}`)
                 .then((res) => {
                     if (res.data.status) {
                         setCategory(res.data.category);
@@ -54,29 +48,25 @@ const IngredientDetail = () => {
                 </div>
             </section>
 
-            {/* Categories List */}
+            {/* Subcategories List */}
             <section className="contentContainer prodCatList">
                 <div className="container">
                     <div className="row">
-                        {/* Case 1: No sub-parent → directly under category name */}
+                        {/* No sub-parent */}
                         {grouped["no_parent"] && (
                             <div className="col-12 mb-4">
-                                {/* <h3>{category.name} </h3> */}
                                 <div className="row">
                                     {grouped["no_parent"].map((sub) => (
-                                        <div
-                                            key={sub.id}
-                                            className="col-lg-3 col-md-4 col-sm-6 d-flex"
-                                        >
+                                        <div key={sub.id} className="col-lg-3 col-md-4 col-sm-6 d-flex">
                                             <Link
-                                                to={`/ingredient/${slugify(sub.name)}`}
-                                                state={{ id: sub.id }}
+                                                to={`/subcategory/${slugify(sub.name)}`}
+                                                state={{ id: sub.id, name: sub.name }}
                                                 className="productBox catBox"
                                             >
                                                 <div className="productImage img-hover-zoom">
                                                     <img
                                                         className="imgResponsive"
-                                                        src={`${BASE_URL}/${sub.image || "noimage.png"}`}
+                                                        src={`${CATEGORY_IMG_BASE_URL}/${sub.image || "noimage.png"}`}
                                                         alt={sub.name}
                                                     />
                                                 </div>
@@ -90,7 +80,7 @@ const IngredientDetail = () => {
                             </div>
                         )}
 
-                        {/* Case 2: Sub-parent exists → group under sub_parent heading */}
+                        {/* Sub-parent exists */}
                         {Object.keys(grouped)
                             .filter((key) => key !== "no_parent")
                             .map((parentKey) => (
@@ -98,19 +88,16 @@ const IngredientDetail = () => {
                                     <h3 className="mb-4 text-center font-weight-bold text-dark">{parentKey}</h3>
                                     <div className="row">
                                         {grouped[parentKey].map((sub) => (
-                                            <div
-                                                key={sub.id}
-                                                className="col-lg-3 col-md-4 col-sm-6 d-flex"
-                                            >
+                                            <div key={sub.id} className="col-lg-3 col-md-4 col-sm-6 d-flex">
                                                 <Link
-                                                    to={`/ingredient/${slugify(sub.name)}`}
-                                                    state={{ id: sub.id }}
+                                                    to={`/subcategory/${slugify(sub.name)}`}
+                                                    state={{ id: sub.id, name: sub.name }}
                                                     className="productBox catBox"
                                                 >
                                                     <div className="productImage img-hover-zoom">
                                                         <img
                                                             className="imgResponsive"
-                                                            src={`${BASE_URL}/${sub.image || "noimage.png"}`}
+                                                            src={`${CATEGORY_IMG_BASE_URL}/${sub.image || "noimage.png"}`}
                                                             alt={sub.name}
                                                         />
                                                     </div>

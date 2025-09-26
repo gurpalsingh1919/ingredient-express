@@ -1,8 +1,8 @@
-// src/pages/ProductDetail.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { API_BASE_URL } from "../config"; // import your dynamic base URL
 
 function ProductDetail() {
    const { id } = useParams();
@@ -13,10 +13,10 @@ function ProductDetail() {
    const [selectedSize, setSelectedSize] = useState("");
    const [quantity, setQuantity] = useState(1);
 
-   // 🔹 Fetch product details
+   // Fetch product details
    useEffect(() => {
       axios
-         .get(`http://127.0.0.1:8000/api/products/${id}`)
+         .get(`${API_BASE_URL}/api/products/${id}`)
          .then((res) => {
             if (res.data.status) {
                setProduct(res.data.product);
@@ -35,7 +35,7 @@ function ProductDetail() {
       setQuantity(isNaN(val) || val < 1 ? 1 : val);
    };
 
-   // 🔹 Add to Cart Handler
+   // Add to Cart Handler
    const handleAddToCart = () => {
       const token = localStorage.getItem("auth_token");
 
@@ -48,27 +48,22 @@ function ProductDetail() {
             confirmButtonText: "Login Now",
             cancelButtonText: "Cancel",
          }).then((result) => {
-            if (result.isConfirmed) {
-               navigate("/login");
-            }
+            if (result.isConfirmed) navigate("/login");
          });
          return;
       }
 
-      // If logged in → call API to add to cart
       axios
          .post(
-            "http://127.0.0.1:8000/api/cart/add",
+            `${API_BASE_URL}/api/cart/add`,
             {
                product_id: product.id,
                size: selectedSize,
                quantity: quantity,
             },
-            {
-               headers: { Authorization: `Bearer ${token}` },
-            }
+            { headers: { Authorization: `Bearer ${token}` } }
          )
-         .then((res) => {
+         .then(() => {
             Swal.fire({
                icon: "success",
                title: "Added to Cart",
@@ -77,8 +72,8 @@ function ProductDetail() {
                showConfirmButton: false,
             });
 
-            // Optionally redirect to cart
-            // navigate("/shopping-cart");
+            // Dispatch cart update event
+            window.dispatchEvent(new Event("cartUpdated"));
          })
          .catch((err) => {
             console.error(err);
@@ -103,7 +98,7 @@ function ProductDetail() {
                         {product.images?.map((img, index) => (
                            <img
                               key={index}
-                              src={`http://127.0.0.1:8000/img/products/${img.image}`}
+                              src={`${API_BASE_URL}/img/products/${img.image}`}
                               alt={product.title}
                            />
                         ))}
@@ -113,8 +108,8 @@ function ProductDetail() {
                            id="mainImg"
                            src={
                               product.images?.length > 0
-                                 ? `http://127.0.0.1:8000/img/products/${product.images[0].image}`
-                                 : "/images/noimage.png"
+                                 ? `${API_BASE_URL}/img/products/${product.images[0].image}`
+                                 : `${API_BASE_URL}/img/categories/noimage.png`
                            }
                            alt={product.title}
                         />
@@ -128,12 +123,11 @@ function ProductDetail() {
                         <h4>${product.doubled_price}</h4>
                         <hr />
 
-                        {/* Dynamic Size Dropdown */}
                         {sizes.length > 0 && (
                            <div className="productSizes">
                               <label>Size</label>
                               <select
-                                 className="single-option-selector single-option-selector-product-template product-form__input"
+                                 className="single-option-selector"
                                  value={selectedSize}
                                  onChange={(e) => setSelectedSize(e.target.value)}
                               >
@@ -146,7 +140,6 @@ function ProductDetail() {
                            </div>
                         )}
 
-                        {/* Quantity Selector */}
                         <div className="productQuantity mt-3">
                            <label>Quantity</label>
                            <div className="d-flex align-items-center">
@@ -156,16 +149,13 @@ function ProductDetail() {
                               >
                                  <i className="fa-solid fa-minus"></i>
                               </button>
-
                               <input
                                  type="text"
                                  className="form-control text-center mb-0"
                                  style={{ width: "78px" }}
                                  value={quantity}
-                                 min="1"
                                  onChange={handleChangeQty}
                               />
-
                               <button
                                  className="btn btn-outline-secondary"
                                  onClick={() => setQuantity((q) => q + 1)}
@@ -175,7 +165,6 @@ function ProductDetail() {
                            </div>
                         </div>
 
-                        {/* Add to Cart */}
                         <div className="mt-4">
                            <button className="btn btn-primary" onClick={handleAddToCart}>
                               <i className="fa-solid fa-cart-shopping me-2"></i>
@@ -196,12 +185,10 @@ function ProductDetail() {
          <section>
             <div className="container">
                <div className="row">
-                  <div className="col-md-12">
-                     <div className="full-width full-width--return-link text-center">
-                        <Link to="/products" className="h1 return-link">
-                           <i className="fa-solid fa-arrow-left"></i> Back to Products
-                        </Link>
-                     </div>
+                  <div className="col-md-12 text-center">
+                     <Link to="/products" className="h1 return-link">
+                        <i className="fa-solid fa-arrow-left"></i> Back to Products
+                     </Link>
                   </div>
                </div>
             </div>

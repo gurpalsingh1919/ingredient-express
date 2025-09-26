@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config"; // ✅ import dynamic API base URL
 
 function Contact() {
    const [formData, setFormData] = useState({
       name: "",
       email: "",
       phone: "",
-      message: "", // 👈 renamed to match "contact[body]"
+      message: "",
    });
 
    const [loading, setLoading] = useState(false);
@@ -25,10 +26,10 @@ function Contact() {
       setLoading(true);
 
       try {
-         const res = await axios.post("http://127.0.0.1:8000/api/contact", formData);
+         const res = await axios.post(`${API_BASE_URL}/api/contact`, formData); // ✅ dynamic API
          if (res.data.status) {
             setStatus("Message sent successfully!");
-            setFormData({ name: "", email: "", phone: "", message: "" }); // reset
+            setFormData({ name: "", email: "", phone: "", message: "" });
          }
       } catch (err) {
          if (err.response && err.response.data.errors) {
@@ -44,6 +45,7 @@ function Contact() {
 
    return (
       <main>
+         {/* Banner */}
          <section className="innerBanner">
             <div className="container">
                <h1>Contact Us</h1>
@@ -54,43 +56,30 @@ function Contact() {
             <div className="container">
                <div className="row">
                   <div className="col-md-12">
+
                      {/* Contact info icons */}
                      <div className="content-block">
                         <div className="rte">
                            <div className="contact-us-main-container">
-                              <div className="contact-us-main-container-inner">
-                                 <div className="contact-us-main-container-inner-block">
-                                    <div className="contact-us-main-container-inner-block1-img">
-                                       <img src="//cdn.shopify.com/s/files/1/2379/1365/files/email-new_ea48f81c-8051-4293-b48a-b954af610d0b_large.png" alt="Email" />
-                                    </div>
-                                    <div className="contact-us-main-container-inner-block1-text">
-                                       <strong>Email:</strong><br /><br />
-                                    </div>
-                                 </div>
-                                 <div className="contact-us-main-container-inner-block">
-                                    <div className="contact-us-main-container-inner-block2-img">
-                                       <img src="//cdn.shopify.com/s/files/1/2379/1365/files/phone-new_large.png" alt="Phone" />
-                                    </div>
-                                    <div className="contact-us-main-container-inner-block2-text">
-                                       <strong>Phone:</strong><br /><br />
-                                    </div>
-                                 </div>
-                                 <div className="contact-us-main-container-inner-block">
-                                    <div className="contact-us-main-container-inner-block3-img">
-                                       <img src="//cdn.shopify.com/s/files/1/2379/1365/files/fax-new3_large.png" alt="Fax" />
-                                    </div>
-                                    <div className="contact-us-main-container-inner-block3-text">
-                                       <strong>Fax:</strong><br /><br />
-                                    </div>
-                                 </div>
-                                 <div className="contact-us-main-container-inner-block">
-                                    <div className="contact-us-main-container-inner-block4-img">
-                                       <img src="//cdn.shopify.com/s/files/1/2379/1365/files/home-new_large.png" alt="Location" />
-                                    </div>
-                                    <div className="contact-us-main-container-inner-block4-text">
-                                       <strong>Location:</strong>
-                                    </div>
-                                 </div>
+                              {/* Email */}
+                              <div className="contact-us-main-container-inner-block">
+                                 <img src="//cdn.shopify.com/s/files/1/2379/1365/files/email-new_ea48f81c-8051-4293-b48a-b954af610d0b_large.png" alt="Email" />
+                                 <strong>Email:</strong>
+                              </div>
+                              {/* Phone */}
+                              <div className="contact-us-main-container-inner-block">
+                                 <img src="//cdn.shopify.com/s/files/1/2379/1365/files/phone-new_large.png" alt="Phone" />
+                                 <strong>Phone:</strong>
+                              </div>
+                              {/* Fax */}
+                              <div className="contact-us-main-container-inner-block">
+                                 <img src="//cdn.shopify.com/s/files/1/2379/1365/files/fax-new3_large.png" alt="Fax" />
+                                 <strong>Fax:</strong>
+                              </div>
+                              {/* Location */}
+                              <div className="contact-us-main-container-inner-block">
+                                 <img src="//cdn.shopify.com/s/files/1/2379/1365/files/home-new_large.png" alt="Location" />
+                                 <strong>Location:</strong>
                               </div>
                            </div>
                         </div>
@@ -102,10 +91,8 @@ function Contact() {
                            <form onSubmit={handleSubmit} className="contact-form">
                               <div className="row">
                                  <div className="col-md-6">
-                                    <label htmlFor="ContactFormName" className="label-hidden">Name</label>
                                     <input
                                        type="text"
-                                       id="ContactFormName"
                                        name="contact[name]"
                                        placeholder="Name"
                                        value={formData.name}
@@ -114,10 +101,8 @@ function Contact() {
                                     />
                                  </div>
                                  <div className="col-md-6">
-                                    <label htmlFor="ContactFormEmail" className="label-hidden">Email</label>
                                     <input
                                        type="email"
-                                       id="ContactFormEmail"
                                        name="contact[email]"
                                        placeholder="Email"
                                        value={formData.email}
@@ -126,10 +111,8 @@ function Contact() {
                                     />
                                  </div>
                                  <div className="col-md-12">
-                                    <label htmlFor="ContactFormPhone" className="label-hidden">Phone Number</label>
                                     <input
                                        type="tel"
-                                       id="ContactFormPhone"
                                        name="contact[phone]"
                                        placeholder="Phone Number"
                                        pattern="[0-9\-]*"
@@ -138,13 +121,11 @@ function Contact() {
                                     />
                                  </div>
                                  <div className="col-md-12">
-                                    <label htmlFor="ContactFormMessage" className="label-hidden">Message</label>
                                     <textarea
                                        rows="10"
-                                       id="ContactFormMessage"
                                        name="contact[message]"
                                        placeholder="Message"
-                                       value={formData.body}   // 👈 fixed
+                                       value={formData.message} // ✅ corrected from body
                                        onChange={handleChange}
                                        required
                                     ></textarea>

@@ -20,7 +20,7 @@
                             </div>
                             <div class="media-body text-right">
                                 <p class="widget-text mb-0">Contact us</p>
-                                <p class="widget-numeric-value">0</p>
+                                <p class="widget-numeric-value">{{ $contactCount }}</p>
                             </div>
                         </div>
                        
@@ -54,7 +54,7 @@
                             </div>
                             <div class="media-body text-right">
                                 <p class="widget-text mb-0"> Products</p>
-                                <p class="widget-numeric-value">0</p>
+                                <p class="widget-numeric-value">{{ $productCount }}</p>
                             </div>
                         </div>
                         
@@ -76,7 +76,7 @@
                             </div>
                             <div class="media-body text-right">
                                 <p class="widget-text mb-0"> Orders</p>
-                                <p class="widget-numeric-value">0</p>
+                                <p class="widget-numeric-value">{{ $orderCount }}</p>
                             </div>
                         </div>
                         <!-- <p class="widget-total-stats mt-2">0 active applicants</p> -->

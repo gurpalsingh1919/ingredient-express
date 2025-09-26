@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import Footer from "./components/Footer";
+import SubCategoryProducts from "./pages/SubCategoryProducts";
 
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -26,6 +27,7 @@ import ShoppingCart from './pages/ShoppingCart';
 import Checkout from './pages/Checkout';
 import Ingredients from './pages/ingredients';
 import IngredientDetail from "./pages/IngredientDetail";
+
 // import Categories from './components/Categories';      
 // import CategoryPage from "./pages/CategoryPage";
 
@@ -51,6 +53,8 @@ function App() {
         <Route path="/ingredients" element={<Ingredients />} />
         <Route path="/search-products" element={<Search />} />
         <Route path="/ingredient/:slug" element={<IngredientDetail />} />
+        <Route path="/subcategory/:slug" element={<SubCategoryProducts />} />
+
 
         {/* 🔒 Protected Routes */}
         <Route
@@ -62,13 +66,14 @@ function App() {
           }
         />
         <Route
-          path="/order-history"
+          path="/order-history/:orderId"
           element={
             <ProtectedRoute>
               <OrderHistory />
             </ProtectedRoute>
           }
         />
+        
         <Route
           path="/shopping-cart"
           element={
